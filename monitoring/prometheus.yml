@@ -1,0 +1,19 @@
+# Short intervals keep an academic demo responsive.
+global:
+  scrape_interval: 10s
+  evaluation_interval: 10s
+# Alerts are visible in Prometheus; delivery needs a separate Alertmanager.
+rule_files:
+  - /etc/prometheus/alert.rules.yml
+# Service names resolve on the shared Compose network.
+scrape_configs:
+  - job_name: backend
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['backend:8000']
+  - job_name: cadvisor
+    static_configs:
+      - targets: ['cadvisor:8080']
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']

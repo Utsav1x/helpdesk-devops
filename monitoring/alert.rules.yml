@@ -1,0 +1,12 @@
+# Fire after a failed scrape persists for one minute.
+groups:
+  - name: application-availability
+    rules:
+      - alert: BackendDown
+        expr: up{job="backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: 'Backend metrics endpoint is unavailable'
+          description: 'Prometheus has failed to scrape {{ $labels.instance }} for more than one minute.'

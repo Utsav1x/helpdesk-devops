@@ -1,0 +1,10 @@
+# A fixed UID connects imported dashboard panels to this datasource.
+apiVersion: 1
+datasources:
+  - name: Prometheus
+    uid: prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false

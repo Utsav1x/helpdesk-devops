@@ -1,0 +1,19 @@
+# Secrets stay on the developer machine or in Jenkins credentials.
+.env
+.env.*
+!.env.example
+!.env.*.example
+# Generated dependencies, reports and deployment state.
+node_modules/
+dist/
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+reports/
+.deploy/
+*.db
+# Preview-only database and random session key are not deliverables.
+.preview/
+# One-time Jenkins bootstrap credentials never belong in Git or the ZIP.
+.bootstrap/

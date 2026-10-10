@@ -1,0 +1,6 @@
+# Runtime dependencies are pinned for repeatable installations.
+Flask==3.1.0
+SQLAlchemy==2.0.36
+psycopg[binary]==3.2.3
+prometheus-client==0.21.1
+gunicorn==23.0.0

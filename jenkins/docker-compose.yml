@@ -1,0 +1,18 @@
+# Start from the repository root with --env-file .env.production.
+services:
+  jenkins:
+    build: .
+    image: todo-jenkins:2.555.3-1
+    ports:
+      - '127.0.0.1:${JENKINS_PORT:-8088}:8080'
+    # Match the host socket group; do not make the socket world-writable.
+    group_add: ['${DOCKER_GID:-0}']
+    volumes:
+      - jenkins-home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      JAVA_OPTS: '-Djenkins.install.runSetupWizard=true'
+    restart: unless-stopped
+# This named volume holds jobs, credentials and deployment lock/state files.
+volumes:
+  jenkins-home:

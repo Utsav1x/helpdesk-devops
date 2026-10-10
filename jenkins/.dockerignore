@@ -1,0 +1,6 @@
+# Only the image recipe and plugin list are needed for the build.
+*
+!Dockerfile
+!plugins.txt
+!init.groovy.d/
+!init.groovy.d/**

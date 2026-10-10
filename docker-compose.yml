@@ -1,0 +1,46 @@
+# Use -p todo-production or -p todo-staging and a matching --env-file.
+services:
+  db:
+    image: postgres:16.6-alpine3.20
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-todos}
+      POSTGRES_USER: ${POSTGRES_USER:-todoapp}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set a database password in the environment file}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks: [app]
+    restart: unless-stopped
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 5s
+      retries: 12
+  backend:
+    # Environment-specific image repositories keep rollback tags isolated.
+    image: todo-${APP_ENV:?Set APP_ENV}-backend:${IMAGE_TAG:-local}
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-todoapp}:${POSTGRES_PASSWORD:?Set a database password}@db:5432/${POSTGRES_DB:-todos}
+      SECRET_KEY: ${SECRET_KEY:?Run scripts/init-env.py to create a random session key}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+    ports:
+      - '127.0.0.1:${BACKEND_PORT:-8000}:8000'
+    networks: [app]
+    depends_on:
+      db: {condition: service_healthy}
+    restart: unless-stopped
+  frontend:
+    image: todo-${APP_ENV:?Set APP_ENV}-frontend:${IMAGE_TAG:-local}
+    build: ./frontend
+    ports:
+      - '127.0.0.1:${FRONTEND_PORT:-8080}:8080'
+    networks: [app]
+    depends_on:
+      backend: {condition: service_healthy}
+    restart: unless-stopped
+# Compose prefixes both resources with the project name for isolation.
+volumes:
+  db-data:
+networks:
+  app:
+    driver: bridge

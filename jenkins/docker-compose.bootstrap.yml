@@ -1,0 +1,15 @@
+# Optional first-run automation. Paths resolve relative to jenkins/docker-compose.yml.
+services:
+  jenkins:
+    environment:
+      JAVA_OPTS: '-Djenkins.install.runSetupWizard=false'
+      HELPDESK_BOOTSTRAP: 'true'
+    # Secrets are mounted read-only at runtime, never copied into an image.
+    volumes:
+      - ../.bootstrap:/run/helpdesk-bootstrap:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'test -f /var/jenkins_home/helpdesk-bootstrap.complete && curl --fail --silent http://localhost:8080/login >/dev/null']
+      interval: 10s
+      timeout: 5s
+      retries: 60
+      start_period: 30s

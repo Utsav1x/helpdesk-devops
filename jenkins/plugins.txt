@@ -1,0 +1,14 @@
+# SCM checkout and GitHub multibranch discovery/webhooks.
+git
+github
+github-branch-source
+# Declarative pipelines, secret file binding, reports and environment locks.
+workflow-aggregator
+pipeline-model-definition
+credentials-binding
+junit
+lockable-resources
+# Human-readable stage view and optional email notifications.
+pipeline-stage-view
+timestamper
+mailer

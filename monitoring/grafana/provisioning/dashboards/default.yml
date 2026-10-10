@@ -1,0 +1,10 @@
+# Load version-controlled JSON dashboards from the mounted directory.
+apiVersion: 1
+providers:
+  - name: Academic DevOps
+    folder: DevOps
+    type: file
+    disableDeletion: true
+    editable: false
+    options:
+      path: /var/lib/grafana/dashboards
