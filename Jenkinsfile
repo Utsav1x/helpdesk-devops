@@ -53,6 +53,16 @@ pipeline {
       // deploy.sh gates/rolls back under the same lock; show its report in a distinct stage.
       steps { sh 'test -s reports/smoke.txt && cat reports/smoke.txt' }
     }
+    stage('Monitoring') {
+      when { branch 'develop' }
+      steps {
+        lock(resource: 'todo-staging') {
+          withCredentials([file(credentialsId: 'todo-staging-env', variable: 'ENV_FILE')]) {
+            sh 'bash scripts/monitoring.sh staging "$ENV_FILE"'
+          }
+        }
+      }
+    }
   }
   post {
     always {

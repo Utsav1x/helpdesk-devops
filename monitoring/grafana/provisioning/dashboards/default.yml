@@ -1,4 +1,4 @@
-# Load version-controlled JSON dashboards from the mounted directory.
+# Load version-controlled JSON dashboards packaged in the Grafana image.
 apiVersion: 1
 providers:
   - name: Academic DevOps
@@ -7,4 +7,4 @@ providers:
     disableDeletion: true
     editable: false
     options:
-      path: /var/lib/grafana/dashboards
+      path: /opt/helpdesk-dashboards
