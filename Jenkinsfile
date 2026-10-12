@@ -3,6 +3,7 @@ pipeline {
   agent any
   options { timestamps(); disableConcurrentBuilds(); skipDefaultCheckout(true) }
   parameters {
+    booleanParam(name: 'REHEARSE_STAGING', defaultValue: false, description: 'Run controlled staging-only persistence, rollback and alert recovery exercises.')
     string(name: 'NOTIFY_EMAIL', defaultValue: '', description: 'Optional recipient after SMTP is configured; otherwise notifications appear in the build log.')
   }
   stages {
@@ -59,6 +60,16 @@ pipeline {
         lock(resource: 'todo-staging') {
           withCredentials([file(credentialsId: 'todo-staging-env', variable: 'ENV_FILE')]) {
             sh 'bash scripts/monitoring.sh staging "$ENV_FILE"'
+          }
+        }
+      }
+    }
+    stage('Recovery rehearsal') {
+      when { allOf { branch 'develop'; expression { params.REHEARSE_STAGING } } }
+      steps {
+        lock(resource: 'todo-staging') {
+          withCredentials([file(credentialsId: 'todo-staging-env', variable: 'ENV_FILE')]) {
+            sh 'bash scripts/rehearse.sh staging "$ENV_FILE" > reports/rehearsal.txt 2>&1 || { cat reports/rehearsal.txt; exit 1; }; cat reports/rehearsal.txt'
           }
         }
       }
