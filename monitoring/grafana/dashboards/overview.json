@@ -12,8 +12,8 @@
   "panels": [
     {
       "id": 1,
-      "title": "Container CPU (%)",
-      "description": "PromQL: 100 * sum by (name) (rate(container_cpu_usage_seconds_total{job=\"cadvisor\",image!=\"\"}[2m]))",
+      "title": "CPU usage (% of one core; container or Docker host)",
+      "description": "Shows individual containers when available. Docker Desktop currently exposes only root cgroup metrics; the explicitly named Docker host total is used as fallback. CPU is percent of one core, so multicore totals may exceed 100.",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -28,7 +28,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "100 * sum by (name) (rate(container_cpu_usage_seconds_total{job=\"cadvisor\",image!=\"\"}[2m]))",
+          "expr": "100 * sum by (name) (rate(container_cpu_usage_seconds_total{job=\"cadvisor\",image!=\"\"}[2m])) or label_replace((100 * sum(rate(container_cpu_usage_seconds_total{job=\"cadvisor\",id=\"/\"}[2m]))), \"name\", \"Docker host total (fallback)\", \"\", \"\")",
           "legendFormat": "{{name}}"
         }
       ],
@@ -41,8 +41,8 @@
     },
     {
       "id": 2,
-      "title": "Container memory",
-      "description": "PromQL: sum by (name) (container_memory_working_set_bytes{job=\"cadvisor\",image!=\"\"})",
+      "title": "Memory (container or Docker host)",
+      "description": "Shows individual containers when available. Docker Desktop currently exposes only root cgroup metrics; the explicitly named Docker host total is used as fallback. CPU is percent of one core, so multicore totals may exceed 100.",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -57,7 +57,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum by (name) (container_memory_working_set_bytes{job=\"cadvisor\",image!=\"\"})",
+          "expr": "sum by (name) (container_memory_working_set_bytes{job=\"cadvisor\",image!=\"\"}) or label_replace((sum(container_memory_working_set_bytes{job=\"cadvisor\",id=\"/\"})), \"name\", \"Docker host total (fallback)\", \"\", \"\")",
           "legendFormat": "{{name}}"
         }
       ],

@@ -59,9 +59,9 @@ Existing Compose project/image/volume names retain the `todo-` prefix to preserv
 
 ## Start from a fresh clone
 
-For a fresh Jenkins installation connected to your GitHub repository, use the [automated first-run setup](docs/automated-setup.md). It prepares credentials and the multibranch job, with periodic GitHub scans. Docker runtime validation is still pending.
+For a fresh Jenkins installation connected to your GitHub repository, use the [automated first-run setup](docs/automated-setup.md). It prepares credentials and the multibranch job, with periodic GitHub scans. Docker runtime validation passed through Jenkins; see [verified evidence](docs/verification.md).
 
-**Windows demo shortcut:** from this project folder, run `powershell -NoProfile -File .\scripts\demo.ps1`. It locates Docker Desktop, generates private env files, builds staging, waits for health checks and verifies CRUD through nginx. Add `-Monitoring -Jenkins` for the full stack. The script leaves containers running so you can present them. Stop with the same flags plus `-Stop`. This launcher must still be executed successfully on your machine before calling the Docker demo verified.
+**Windows demo shortcut:** from this project folder, run `powershell -NoProfile -File .\scripts\demo.ps1`. It locates Docker Desktop, generates private env files, builds staging, waits for health checks and verifies CRUD through nginx. Add `-Monitoring -Jenkins` for the full stack. The script leaves containers running so you can present them. Stop with the same flags plus `-Stop`. The current Docker deployment was verified through Jenkins; the launcher is an alternative startup path.
 
 Prerequisites: Git, Python 3.11+ for env generation/tests, Docker Engine/Desktop with Linux containers and Compose v2 supporting `up --wait`; Git Bash/WSL/Linux for shell scripts. Linux/WSL or Jenkins is required for deployments using `flock`. Node 22+ is needed only for frontend development outside Docker. Allow several GB of image storage and preferably 8 GB RAM for the full lab.
 
@@ -84,7 +84,7 @@ docker compose -p todo-staging --env-file .env.staging up -d --build --wait --wa
 bash scripts/smoke-test.sh http://localhost:8081
 # Add monitoring to staging for the demo; preserve already-deployed app images.
 docker compose -p todo-staging --env-file .env.staging -f docker-compose.yml -f docker-compose.monitoring.yml config --quiet
-docker compose -p todo-staging --env-file .env.staging -f docker-compose.yml -f docker-compose.monitoring.yml up -d --no-recreate
+docker compose -p todo-staging --env-file .env.staging -f docker-compose.yml -f docker-compose.monitoring.yml up -d --build --no-recreate
 # Start Jenkins, then complete the manual setup guide.
 docker compose -p todo-ci --env-file .env.production -f jenkins/docker-compose.yml config --quiet
 docker compose -p todo-ci --env-file .env.production -f jenkins/docker-compose.yml up -d --build --wait --wait-timeout 240
