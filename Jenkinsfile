@@ -12,6 +12,7 @@ pipeline {
         sh 'mkdir -p reports; rm -f reports/unit-tests.xml reports/smoke.txt'
         script {
           env.DEPLOY_ENV = env.BRANCH_NAME == 'main' ? 'production' : 'staging'
+          env.GIT_COMMIT = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
           env.IMAGE_TAG = "${env.GIT_COMMIT.take(12)}-${env.BUILD_NUMBER}"
         }
       }
